@@ -154,6 +154,51 @@ function find_page_by_id( $id ) {
   return $page; // returns an assoc. array
 }
 
+function validate_page($page) {
+
+  $errors = [];
+  
+  // menu_name
+  if(is_blank($page['menu_name'])) {
+    $errors[] = "Name cannot be blank.";
+  } elseif(!has_length($page['menu_name'], ['min' => 2, 'max' => 255])) {
+    $errors[] = "Name must be between 2 and 255 characters.";
+  }
+  
+  // subject_id
+  // make sure we are working with an integer
+  $subject_id_int = (int) $page['subject_id'];
+  if($subject_id_int <= 0) {
+    $errors[] = "Subject ID must be greater than zero.";
+  }
+  if($subject_id_int > 999) {
+    $errors[] = "Subject ID must be less than 999.";
+  }
+
+
+  // position
+  // Make sure we are working with an integer
+  $postion_int = (int) $page['position'];
+  if($postion_int <= 0) {
+    $errors[] = "Position must be greater than zero.";
+  }
+  if($postion_int > 999) {
+    $errors[] = "Position must be less than 999.";
+  }
+
+  // visible
+  // Make sure we are working with a string
+  $visible_str = (string) $page['visible'];
+  if(!has_inclusion_of($visible_str, ["0","1"])) {
+    $errors[] = "Visible must be true or false.";
+  }
+  
+  // content
+  
+  return $errors;
+}
+
+
 function insert_page( $page ) {
   global $db;
 
