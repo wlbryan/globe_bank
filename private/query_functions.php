@@ -155,8 +155,12 @@ function find_page_by_id( $id ) {
 }
 
 function validate_page($page) {
-
   $errors = [];
+  
+  // subject_id
+  if(is_blank($page['subject_id'])) {
+    $errors[] = "Subject cannot be blank.";
+  }
   
   // menu_name
   if(is_blank($page['menu_name'])) {
@@ -164,18 +168,11 @@ function validate_page($page) {
   } elseif(!has_length($page['menu_name'], ['min' => 2, 'max' => 255])) {
     $errors[] = "Name must be between 2 and 255 characters.";
   }
+  $current_id = $page['id'] ?? '0';
+  if(!has_unique_page_menu_name($page['menu_name'], $current_id)){
+    $errors[] = "Menu name must be unique.";
+  }
   
-  // subject_id
-  // make sure we are working with an integer
-  $subject_id_int = (int) $page['subject_id'];
-  if($subject_id_int <= 0) {
-    $errors[] = "Subject ID must be greater than zero.";
-  }
-  if($subject_id_int > 999) {
-    $errors[] = "Subject ID must be less than 999.";
-  }
-
-
   // position
   // Make sure we are working with an integer
   $postion_int = (int) $page['position'];
@@ -194,13 +191,20 @@ function validate_page($page) {
   }
   
   // content
+  if(is_blank($page['content'])){
+    $errors[] = "Content cannot be blank.";
+  }
   
   return $errors;
 }
 
-
 function insert_page( $page ) {
   global $db;
+  
+  $errors = validate_page($page);
+  if(!empty($errors)) {
+    return $errors;
+  }
 
   $sql = "INSERT INTO pages ";
   $sql .= "(subject_id, menu_name, position, visible, content) ";
@@ -225,6 +229,11 @@ function insert_page( $page ) {
 
 function update_page( $page ) {
   global $db;
+  
+  $errors = validate_page($page);
+  if(!empty($errors)) {
+    return $errors;
+  }
 
   $sql = "UPDATE pages SET ";
   $sql .= "subject_id='" . $page[ 'subject_id' ] . "', ";
