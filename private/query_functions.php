@@ -56,7 +56,7 @@ function validate_subject($subject) {
   return $errors;
 }
 
-function insert_subject( $subject ) {
+function insert_subject($subject) {
   global $db;
   
   $errors = validate_subject($subject);
@@ -83,7 +83,7 @@ function insert_subject( $subject ) {
   }
 }
 
-function update_subject( $subject ) {
+function update_subject($subject) {
   global $db;
   
   $errors = validate_subject($subject);
@@ -111,7 +111,7 @@ function update_subject( $subject ) {
 
 }
 
-function delete_subject( $id ) {
+function delete_subject($id) {
   global $db;
 
   $sql = "DELETE FROM subjects ";
@@ -142,7 +142,7 @@ function find_all_pages() {
   return $result;
 }
 
-function find_page_by_id( $id ) {
+function find_page_by_id($id) {
   global $db;
 
   $sql = "SELECT * FROM pages ";
@@ -198,7 +198,7 @@ function validate_page($page) {
   return $errors;
 }
 
-function insert_page( $page ) {
+function insert_page($page) {
   global $db;
   
   $errors = validate_page($page);
@@ -227,7 +227,7 @@ function insert_page( $page ) {
   }
 }
 
-function update_page( $page ) {
+function update_page($page) {
   global $db;
   
   $errors = validate_page($page);
@@ -257,7 +257,7 @@ function update_page( $page ) {
 
 }
 
-function delete_page( $id ) {
+function delete_page($id) {
   global $db;
 
   $sql = "DELETE FROM pages ";
@@ -274,6 +274,17 @@ function delete_page( $id ) {
     db_disconnect( $db );
     exit;
   }
+}
+
+function find_pages_by_subject_id($subject_id) {
+  global $db;
+
+  $sql = "SELECT * FROM pages ";
+  $sql .= "WHERE subject_id='" . db_escape($db, $subject_id) . "' ";
+  $sql .= "ORDER BY position ASC";
+  $result = mysqli_query( $db, $sql );
+  confirm_result_set( $result );
+  return $result; // returns a result set (not an associative array).
 }
 
 ?>
